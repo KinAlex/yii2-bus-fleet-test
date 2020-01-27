@@ -3,9 +3,7 @@
 namespace app\controllers;
 
 use app\components\DistanceInfoFacade;
-use app\components\interfaces\DistanceCalculatorInterface;
-use app\models\Bus;
-use app\models\Driver;
+use yii\data\ArrayDataProvider;
 use yii\db\ActiveRecord;
 use yii\rest\ActiveController;
 
@@ -40,10 +38,15 @@ class DriversController extends ActiveController
      * @param string $endCity Конечный город.
      * @param int|null $driverId Идентификатор водителя.
      */
-    public function actionDistanceInfo(string $startCity, string $endCity, ?int $driverId = null)
+    public function actionDistanceInfo(string $startCity, string $endCity, ?int $driverId = null): ArrayDataProvider
     {
         $distanceInfoArray = $this->distanceInfoFacade->distanceInfo($startCity, $endCity, $driverId);
 
-        return $distanceInfoArray;
+        return new ArrayDataProvider([
+            'allModels' => $distanceInfoArray,
+            'pagination' => [
+                'pageSize' => 2,
+            ],
+        ]);
     }
 }
