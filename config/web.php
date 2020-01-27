@@ -49,7 +49,6 @@ $config = [
                 [
                     'class'      => 'yii\rest\UrlRule',
                     'controller' => 'drivers',
-                    'only'       => ['distanceInfo'],
                     'extraPatterns' => [
                         'GET distanceInfo' => 'distanceInfo',
                     ]

@@ -11,6 +11,8 @@ use yii\base\Exception;
 
 /**
  * Class DistanceCalculatorService
+ *
+ * Сервис для вычисления расстояния между городами.
  */
 class FreeDistanceCalculatorService extends BaseObject implements DistanceCalculatorInterface
 {
@@ -68,7 +70,7 @@ class FreeDistanceCalculatorService extends BaseObject implements DistanceCalcul
 
         $body = json_decode($response->getBody()->getContents());
         if (!empty($body->result->address[0]->features[0]->geometry->geometries[0]->coordinates)) {
-            return $coordinates = $body->result->address[0]->features[0]->geometry->geometries[0]->coordinates;
+            return $body->result->address[0]->features[0]->geometry->geometries[0]->coordinates;
         }
     }
 }

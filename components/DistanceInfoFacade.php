@@ -7,6 +7,11 @@ use app\models\Bus;
 use app\models\Driver;
 use yii\base\BaseObject;
 
+/**
+ * Class DistanceInfoFacade
+ *
+ * Фасад для получения информации и водителях и продолжительности маршрута.
+ */
 class DistanceInfoFacade extends BaseObject
 {
     /**
@@ -38,7 +43,6 @@ class DistanceInfoFacade extends BaseObject
      */
     public function distanceInfo(string $startCity, string $endCity, ?int $driverId = null): array
     {
-        $driversModels = [];
         $driversInfo = [];
 
         if ($driverId) {
