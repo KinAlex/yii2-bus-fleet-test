@@ -2,8 +2,6 @@
 
 namespace app\controllers;
 
-use app\components\DistanceInfoFacade;
-use yii\data\ArrayDataProvider;
 use yii\db\ActiveRecord;
 use yii\rest\ActiveController;
 
@@ -19,34 +17,16 @@ class DriversController extends ActiveController
      */
     public $modelClass = 'app\models\Driver';
 
-    /**
-     * @var DistanceInfoFacade
-     */
-    private $distanceInfoFacade;
-
-    public function __construct($id, $module, DistanceInfoFacade $distanceInfoFacade, $config = [])
+    public function actions()
     {
-        $this->distanceInfoFacade = $distanceInfoFacade;
-
-        parent::__construct($id, $module, $config);
-    }
-
-    /**
-     * Получение информации о видителях и продолжительности ммаршрута.
-     *
-     * @param string $startCity Начальный город.
-     * @param string $endCity Конечный город.
-     * @param int|null $driverId Идентификатор водителя.
-     */
-    public function actionDistanceInfo(string $startCity, string $endCity, ?int $driverId = null): ArrayDataProvider
-    {
-        $distanceInfoArray = $this->distanceInfoFacade->distanceInfo($startCity, $endCity, $driverId);
-
-        return new ArrayDataProvider([
-            'allModels' => $distanceInfoArray,
-            'pagination' => [
-                'pageSize' => 2,
-            ],
-        ]);
+        return array_merge(
+            parent::actions(),
+            [
+                'distance-info' => [
+                    'class' => 'app\actions\DistanceInfoAction',
+                    'modelClass' => $this->modelClass,
+                ]
+            ]
+        );
     }
 }
