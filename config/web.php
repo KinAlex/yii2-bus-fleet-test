@@ -55,11 +55,20 @@ $config = [
                 ],
             ],
         ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => 'redis',
+            'port' => 6379,
+            'database' => 1,
+        ],
     ],
     'container' => [
         'singletons' => [
             'app\components\interfaces\DistanceCalculatorInterface' => 'app\components\FreeDistanceCalculatorService',
-        ]
+            'yii\caching\CacheInterface' => [
+                'class' => 'yii\redis\Cache',
+            ],
+        ],
     ],
     'params' => $params,
 ];

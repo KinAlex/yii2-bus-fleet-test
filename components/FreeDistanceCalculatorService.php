@@ -8,6 +8,7 @@ use app\components\helpers\CoordinatesHelper;
 use GuzzleHttp\Client;
 use yii\base\BaseObject;
 use yii\base\Exception;
+use yii\caching\CacheInterface;
 
 /**
  * Class DistanceCalculatorService
@@ -29,14 +30,23 @@ class FreeDistanceCalculatorService extends BaseObject implements DistanceCalcul
     private $httpClientComponent;
 
     /**
+     * Компонент кэширования.
+     *
+     * @var Cache
+     */
+    private $cache;
+
+    /**
      * FreeDistanceCalculatorService constructor.
      *
      * @param Client $httpClientComponent
+     * @param CacheInterface $cache
      * @param array $config
      */
-    public function __construct(Client $httpClientComponent, $config = [])
+    public function __construct(Client $httpClientComponent, CacheInterface $cache, $config = [])
     {
         $this->httpClientComponent = $httpClientComponent;
+        $this->cache = $cache;
 
         parent::__construct($config);
     }
@@ -70,17 +80,19 @@ class FreeDistanceCalculatorService extends BaseObject implements DistanceCalcul
      */
     private function getCityCoordinates(string $cityName): array
     {
-        $response = $this->httpClientComponent->get(self::SITE_URL . $cityName);
+        return $this->cache->getOrSet($cityName, function () use ($cityName) {
+            $response = $this->httpClientComponent->get(self::SITE_URL . $cityName);
 
-        if ($response->getStatusCode() != 200) {
-            throw new Exception('Bad response. Status code != 200');
-        }
+            if ($response->getStatusCode() != 200) {
+                throw new Exception('Bad response. Status code != 200');
+            }
 
-        $body = json_decode($response->getBody()->getContents());
-        if (!empty($body->result->address[0]->features[0]->geometry->geometries[0]->coordinates)) {
-            return $body->result->address[0]->features[0]->geometry->geometries[0]->coordinates;
-        }
+            $body = json_decode($response->getBody()->getContents());
+            if (!empty($body->result->address[0]->features[0]->geometry->geometries[0]->coordinates)) {
+                return $body->result->address[0]->features[0]->geometry->geometries[0]->coordinates;
+            }
 
-        throw new Exception('Unable to get coordinates for city ' . $cityName);
+            throw new Exception('Unable to get coordinates for city ' . $cityName);
+        });
     }
 }
