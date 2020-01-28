@@ -6,6 +6,8 @@ use app\exceptions\InvalidCityPointsException;
 
 /**
  * Interface DistanceCalculatorInterface
+ *
+ * Интерфейс для получения расстояния между городами.
  */
 interface DistanceCalculatorInterface
 {

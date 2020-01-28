@@ -28,6 +28,12 @@ class FreeDistanceCalculatorService extends BaseObject implements DistanceCalcul
      */
     private $httpClientComponent;
 
+    /**
+     * FreeDistanceCalculatorService constructor.
+     *
+     * @param Client $httpClientComponent
+     * @param array $config
+     */
     public function __construct(Client $httpClientComponent, $config = [])
     {
         $this->httpClientComponent = $httpClientComponent;
@@ -58,7 +64,9 @@ class FreeDistanceCalculatorService extends BaseObject implements DistanceCalcul
      * @param string $cityName
      *
      * @return array
+     *
      * @throws Exception при ответе сервера не равном 200.
+     * @throws Exception при получении ответа без заполненных координат.
      */
     private function getCityCoordinates(string $cityName): array
     {
@@ -72,5 +80,7 @@ class FreeDistanceCalculatorService extends BaseObject implements DistanceCalcul
         if (!empty($body->result->address[0]->features[0]->geometry->geometries[0]->coordinates)) {
             return $body->result->address[0]->features[0]->geometry->geometries[0]->coordinates;
         }
+
+        throw new Exception('Unable to get coordinates for city ' . $cityName);
     }
 }
